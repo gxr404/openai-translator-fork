@@ -21,6 +21,21 @@ function ssmlHeadersPlusData(requestId: string, timestamp: string, ssml: string)
     )
 }
 
+async function generateSecMsGec(trustedClientToken: string): Promise<string> {
+    const ticks = Math.floor(Date.now() / 1000) + 11644473600
+    const rounded = ticks - (ticks % 300)
+    const windowsTicks = rounded * 10000000
+
+    const encoder = new TextEncoder()
+    const data = encoder.encode(`${windowsTicks}${trustedClientToken}`)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+
+    return Array.from(new Uint8Array(hashBuffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase()
+}
+
 function getHeadersAndData(data: string) {
     const headers: { [key: string]: string } = {}
     data.slice(0, data.indexOf('\r\n\r\n'))
@@ -33,10 +48,11 @@ function getHeadersAndData(data: string) {
 }
 
 const trustedClientToken = '6A5AA1D4EAFF4E9FB37E23D68491D6F4'
-const wssURL =
-    'wss://speech.platform.bing.com/consumer/speech/synthesize/' +
-    'readaloud/edge/v1?TrustedClientToken=' +
-    trustedClientToken
+const BASE_URL = 'api.msedgeservices.com/tts/cognitiveservices'
+const wssURL = `wss://${BASE_URL}/websocket/v1?Ocp-Apim-Subscription-Key=${trustedClientToken}`
+const CHROMIUM_FULL_VERSION = '140.0.3485.14'
+const SEC_MS_GEC_VERSION = `1-${CHROMIUM_FULL_VERSION}`
+const voiceListURL = `https://${BASE_URL}/voices/list?Ocp-Apim-Subscription-Key=${trustedClientToken}`
 
 // https://github.com/microsoft/cognitive-services-speech-sdk-js/blob/e6faf6b7fc1febb45993b940617719e8ed1358b2/src/sdk/SpeechSynthesizer.ts#L216
 const languageToDefaultVoice: { [key: string]: string } = {
@@ -299,7 +315,13 @@ export async function speak({
     )
 
     for (const text of texts) {
-        const ws = new WebSocket(`${wssURL}&ConnectionId=${connectId}`)
+        const wsParams = [
+            ['ConnectionId', connectId],
+            ['Sec-MS-GEC', await generateSecMsGec(trustedClientToken)],
+            ['Sec-MS-GEC-Version', SEC_MS_GEC_VERSION],
+        ]
+        const wsParamQuery = wsParams.map(([key, value]) => `${key}=${value}`).join('&')
+        const ws = new WebSocket(`${wssURL}&${wsParamQuery}`)
         ws.binaryType = 'arraybuffer'
         ws.addEventListener('open', () => {
             ws.send(
@@ -382,11 +404,6 @@ export async function speak({
         })
     }
 }
-
-const voiceListURL =
-    'https://speech.platform.bing.com/consumer/speech/synthesize/' +
-    'readaloud/voices/list?trustedclienttoken=' +
-    trustedClientToken
 
 interface EdgeVoice {
     FriendlyName: string

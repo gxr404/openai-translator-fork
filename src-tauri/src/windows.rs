@@ -21,6 +21,7 @@ pub const ACTION_MANAGER_WIN_NAME: &str = "action_manager";
 pub const UPDATER_WIN_NAME: &str = "updater";
 pub const THUMB_WIN_NAME: &str = "thumb";
 pub const SCREENSHOT_WIN_NAME: &str = "screenshot";
+pub const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0";
 
 fn get_dummy_window() -> tauri::WebviewWindow {
     let app_handle = APP_HANDLE.get().unwrap();
@@ -36,6 +37,7 @@ fn get_dummy_window() -> tauri::WebviewWindow {
                 "dummy",
                 tauri::WebviewUrl::App("src/tauri/dummy.html".into()),
             )
+            .user_agent(USER_AGENT)
             .title("Dummy")
             .visible(false)
             .build()
@@ -220,6 +222,7 @@ pub fn get_thumb_window(x: i32, y: i32) -> tauri::WebviewWindow {
                 THUMB_WIN_NAME,
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
+            .user_agent(USER_AGENT)
             .fullscreen(false)
             .focused(false)
             .inner_size(20.0, 20.0)
@@ -378,6 +381,7 @@ pub fn get_translator_window(
                 TRANSLATOR_WIN_NAME,
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
+            .user_agent(USER_AGENT)
             .title("OpenAI Translator")
             .fullscreen(false)
             .inner_size(620.0, 700.0)
@@ -476,6 +480,7 @@ pub fn get_action_manager_window() -> tauri::WebviewWindow {
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
             .title("OpenAI Translator Action Manager")
+            .user_agent(USER_AGENT)
             .fullscreen(false)
             .inner_size(700.0, 700.0)
             .min_inner_size(660.0, 600.0)
@@ -511,6 +516,7 @@ pub fn get_settings_window() -> tauri::WebviewWindow {
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
             .title("OpenAI Translator Settings")
+            .user_agent(USER_AGENT)
             .fullscreen(false)
             .inner_size(660.0, 800.0)
             .min_inner_size(660.0, 600.0)
@@ -585,6 +591,7 @@ pub fn get_updater_window() -> tauri::WebviewWindow {
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
             .title("OpenAI Translator Updater")
+            .user_agent(USER_AGENT)
             .fullscreen(false)
             .inner_size(500.0, 500.0)
             .min_inner_size(200.0, 200.0)
@@ -623,6 +630,7 @@ pub fn get_screenshot_window() -> tauri::WebviewWindow {
                 tauri::WebviewUrl::App("src/tauri/index.html".into()),
             )
             .title("OpenAI Translator Screenshot")
+            .user_agent(USER_AGENT)
             .position(position.x, position.y)
             .visible(false)
             .focused(true);
