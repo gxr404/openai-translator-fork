@@ -12,6 +12,7 @@
     "fs": {
       "scope": {
         "allow": [
+          "**",
           "**/*",
           "$CONFIG/*/**",
           "$APPCONFIG/**",
