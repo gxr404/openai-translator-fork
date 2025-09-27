@@ -15,7 +15,9 @@
           "**",
           "$CONFIG/*/**",
           "$APPCONFIG/**",
-          "$APPCACHE/**"
+          "$APPCACHE/**",
+          "$APPDATA/**",
+          "$HOME/**"
         ]
       }
     },
