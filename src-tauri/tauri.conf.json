@@ -24,13 +24,13 @@
     },
     "updater": {
       "endpoints": [
-        "https://github.com/yetone/openai-translator/releases/latest/download/latest.json"
+        "https://github.com/gxr404/openai-translator-fork/releases/latest/download/latest.json"
       ],
       "active": true,
       "windows": {
         "installMode": "passive"
       },
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM3MzdGN0RCQjhGMkVENDEKUldSQjdmSzQyL2MzTjFaY0dIKzQzVnJYSjFwMlhFZmhjWmU5emZoVUt2OWExcVorbDRkK0NBaDMK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDkzMDQxN0ZFNzY2RTZEOUYKUldTZmJXNTIvaGNFa3d5aThTams2bUNibldaaVNVclkyRFhXeWV1elZNV2ZINENqZlFnSTc1RVgK"
     }
   },
   "bundle": {

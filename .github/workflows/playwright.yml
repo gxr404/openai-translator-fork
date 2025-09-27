@@ -25,10 +25,13 @@ jobs:
         cache: 'pnpm'
 
     - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libasound2t64
+        pnpm install --no-frozen-lockfile
 
     - name: Install Playwright Browsers
-      run: pnpm exec playwright install chromium --with-deps
+      run: pnpm exec playwright install chromium
 
     - name: Build Chromium extension
       run: pnpm vite build -c vite.config.chromium.ts
