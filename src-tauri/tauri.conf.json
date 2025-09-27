@@ -12,7 +12,7 @@
     "fs": {
       "scope": {
         "allow": [
-          "**",
+          "**/*",
           "$CONFIG/*/**",
           "$APPCONFIG/**",
           "$APPCACHE/**",
