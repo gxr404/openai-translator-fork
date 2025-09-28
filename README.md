@@ -46,3 +46,10 @@
 - 🛠️  fix edge tts
 
 > [Raw README](./RAW_README.md)
+
+
+## 打开显示「“xxxx”已损坏，无法打开。 您应该将它移到废纸篓。」
+
+```bash
+sudo xattr -d com.apple.quarantine /Applications/OpenAI\ Translator.app
+```

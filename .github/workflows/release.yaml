@@ -38,51 +38,51 @@ jobs:
           tag: ${{ steps.get_version.outputs.version }}
           body: "${{ steps.tag.outputs.message }}"
 
-  build-tauri-renderer:
-    needs: create-release
-    permissions:
-      contents: write
-      packages: write
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
+  # build-tauri-renderer:
+  #   needs: create-release
+  #   permissions:
+  #     contents: write
+  #     packages: write
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Get version
-        id: get_version
-        uses: battila7/get-version-action@v2
+  #     - name: Get version
+  #       id: get_version
+  #       uses: battila7/get-version-action@v2
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.6.0
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: 8.6.0
 
-      - name: setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
+  #     - name: setup node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #         cache: 'pnpm'
 
-      - name: install frontend dependencies
-        run: pnpm install # change this to npm or pnpm depending on which one you use
+  #     - name: install frontend dependencies
+  #       run: pnpm install # change this to npm or pnpm depending on which one you use
 
-      - name: Change Version
-        env:
-          VERSION: "${{ steps.get_version.outputs.version-without-v }}"
-        run: make change-version change-package-version
+  #     - name: Change Version
+  #       env:
+  #         VERSION: "${{ steps.get_version.outputs.version-without-v }}"
+  #       run: make change-version change-package-version
 
-      - uses: oNaiPs/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(secrets) }}
+  #     - uses: oNaiPs/secrets-to-env-action@v1
+  #       with:
+  #         secrets: ${{ toJSON(secrets) }}
 
-      - name: build tauri renderer
-        run: pnpm build-tauri-renderer
+  #     - name: build tauri renderer
+  #       run: pnpm build-tauri-renderer
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tauri-renderer
-          path: dist/tauri/
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: tauri-renderer
+  #         path: dist/tauri/
 
   build-tauri:
-    needs: [create-release, build-tauri-renderer]
+    needs: [create-release]
     permissions:
       contents: write
       packages: write
@@ -113,22 +113,21 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.6.0
+          version: 9.1.3
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '20.16.0'
           cache: 'pnpm'
-
       - name: Install frontend dependencies
         run: pnpm install # change this to npm or pnpm depending on which one you use
 
-      - name: Install Rust nightly
-        uses: dtolnay/rust-toolchain@nightly
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.config.rust_target }}
-          toolchain: '1.78.0'
+          toolchain: '1.85.1'
 
       - name: Install dependencies (ubuntu only)
         if: matrix.config.os == 'ubuntu-latest'
@@ -147,16 +146,18 @@ jobs:
           VERSION: "${{ steps.get_version.outputs.version-without-v }}"
         run: make change-version change-package-version
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: tauri-renderer
-          path: dist/tauri
+      # - uses: actions/download-artifact@v4
+      #   with:
+      #     name: tauri-renderer
+      #     path: dist/tauri
+      - name: build tauri renderer
+        run: pnpm build-tauri-renderer
 
       - name: Install Cargo Tauri for info
-        run: cargo install tauri-cli --version "=2.0.0-beta.19" --locked
+        run: cargo install tauri-cli --version "=2.8.4"
 
-      - name: Tauri info
-        run: cargo tauri info
+      # - name: Tauri info
+      #   run: cargo tauri info
 
       - uses: oNaiPs/secrets-to-env-action@v1
         with:
@@ -181,7 +182,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           releaseBody: ${{ needs.create-release.outputs.release_body }}
-          args: --target aarch64-apple-darwin
+          # args: --target aarch64-apple-darwin
           tauriScript: cargo tauri
           updaterJsonPreferNsis: true
 
@@ -241,7 +242,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.6.0
+          version: 9.1.3
 
       - name: setup node
         uses: actions/setup-node@v3
